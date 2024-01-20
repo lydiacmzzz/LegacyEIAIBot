@@ -75,7 +75,8 @@ def build_chain():
   {context}
   </documents>
   Based on the above documents, provide a detailed answer for, {question} 
-  Answer "don't know" if not present in the document. 
+  Answer "don't know" if not present in the document.
+  Don't show any documents if there is no document.
 
   Assistant:
   """
