@@ -1,6 +1,8 @@
 [server]
 port = 8501
 runOnSave = true
+enableXsrfProtection = false
+enableCORS = false
 
 [browser]
 gatherUsageStats = false
