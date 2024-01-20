@@ -1,5 +1,5 @@
-AWS_REGION="us-east-1"
-KENDRA_INDEX_ID="64beb5ea-16fb-42ce-b341-631c841ecf0c" 
+AWS_REGION = "us-east-1"
+KENDRA_INDEX_ID = "64beb5ea-16fb-42ce-b341-631c841ecf0c" 
 
 [server]
 port = 8501
