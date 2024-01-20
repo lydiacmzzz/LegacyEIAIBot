@@ -10,12 +10,10 @@ st.set_page_config(page_title="EC Upload")
 st.markdown("# Repository Page")
 st.sidebar.header("EC Upload")
 
-#AWS_ACCESS_KEY = "ASIA3XYOI2GRV22SV3NA"
-#AWS_SECRET_KEY = "3r/wrwkVZUDbEIG7JrL4cRn9Rvs5XtimQIylDBtZ"
-BUCKET_NAME = "aiventurers-bucket"
+
+BUCKET_NAME = "zg-aiventurerbucket-202401201915"
 
 def upload_to_s3(local_file_path, s3_file_path):
-    #s3 = boto3.client('s3', aws_access_key_id=resp['Credentials']['AccessKeyId'], aws_secret_access_key=resp['Credentials']['SecretAccessKey'])
     s3 = boto3.client('s3')
 
     try:
@@ -29,8 +27,6 @@ def upload_to_s3(local_file_path, s3_file_path):
         return False
 
 def list_s3_files():
-    #s3 = boto3.client('s3', aws_access_key_id=resp['Credentials']['AccessKeyId'], aws_secret_access_key=resp['Credentials']['SecretAccessKey'])
-    #response = s3.list_objects(Bucket=BUCKET_NAME, Prefix="streamlit_uploads/")
     s3 = boto3.client('s3')
     response = s3.list_objects(Bucket=BUCKET_NAME, Prefix="")
 

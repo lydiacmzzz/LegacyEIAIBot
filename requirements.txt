@@ -3,3 +3,5 @@ boto3>=1.28.27
 openai
 anthropic
 streamlit
+pypdf2
+openpyxl
