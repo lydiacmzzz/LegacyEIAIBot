@@ -2,9 +2,6 @@ import streamlit as st
 import uuid
 import sys
 
-import kendra_chat_anthropic as anthropic
-import kendra_chat_bedrock_titan as bedrock_titan
-import kendra_chat_bedrock_claude as bedrock_claude
 import kendra_chat_bedrock_claudev2 as bedrock_claudev2
 import kendra_chat_falcon_40b as falcon40b
 import kendra_chat_llama_2 as llama2
@@ -13,12 +10,10 @@ USER_ICON = "images/user-icon.png"
 AI_ICON = "images/ECDA_Logo.png"
 MAX_HISTORY_LENGTH = 5
 PROVIDER_MAP = {
-    'openai': 'Open AI',
-    'anthropic': 'Anthropic',
-    'flanxl': 'Flan XL',
-    'flanxxl': 'Flan XXL',
-    'falcon': 'Falcon 7B',
-    'llama2' : 'Llama 2'
+    "bedrock_claude": "Bedrock Claude",
+    "bedrock_claudev2": "Bedrock Claude V2",
+    'llama2' : 'Llama 2',
+    'falcon40b': 'Falcon 40B'
 }
 
 #function to read a properties file and create environment variables
@@ -44,16 +39,7 @@ else:
 
 if 'llm_chain' not in st.session_state:
     if (len(sys.argv) > 1):
-        if (sys.argv[1] == 'anthropic'):
-            st.session_state['llm_app'] = anthropic
-            st.session_state['llm_chain'] = anthropic.build_chain()
-        elif (sys.argv[1] == 'bedrock_titan'):
-            st.session_state['llm_app'] = bedrock_titan
-            st.session_state['llm_chain'] = bedrock_titan.build_chain()
-        elif (sys.argv[1] == 'bedrock_claude'):
-            st.session_state['llm_app'] = bedrock_claude
-            st.session_state['llm_chain'] = bedrock_claude.build_chain()
-        elif (sys.argv[1] == 'bedrock_claudev2'):
+        if (sys.argv[1] == 'bedrock_claudev2'):
             st.session_state['llm_app'] = bedrock_claudev2
             st.session_state['llm_chain'] = bedrock_claudev2.build_chain()
         elif (sys.argv[1] == 'llama2'):
@@ -65,7 +51,7 @@ if 'llm_chain' not in st.session_state:
         else:
             raise Exception("Unsupported LLM: ", sys.argv[1])
     else:
-        raise Exception("Usage: streamlit run app.py <anthropic|flanxl|flanxxl|openai|bedrock_titan|bedrock_claude|bedrock|claudev2>")
+        raise Exception("Usage: streamlit run app.py <bedrock_claude|bedrock_claudev2|llama2|falcon40b>")
 
 if 'chat_history' not in st.session_state:
     st.session_state['chat_history'] = []
@@ -88,8 +74,11 @@ if "answers" not in st.session_state:
 if "input" not in st.session_state:
     st.session_state.input = ""
 
-st.set_page_config(page_title="EC Services Bot")
-st.sidebar.header("EC Services Bot")
+st.set_page_config(
+    page_title = "EI Service Chatbot v1",
+    page_icon = "💻"
+)
+st.sidebar.header("EI Service Chatbot")
 
 st.markdown("""
         <style>
@@ -104,15 +93,15 @@ st.markdown("""
                 }
 
                 .main-header {
-                    font-size: 24px;
+                    font-size: 25px;
                 }
         </style>
         """, unsafe_allow_html=True)
 
-def write_logo():
-    col1, col2, col3 = st.columns([5, 1, 5])
-    with col2:
-        st.image(AI_ICON, use_column_width='always') 
+# def write_logo():
+#     col1, col2, col3 = st.columns([5, 1, 5])
+#     with col2:
+#         st.image(AI_ICON, use_column_width='always') 
 
 
 def write_top_bar():
@@ -125,9 +114,10 @@ def write_top_bar():
             provider = PROVIDER_MAP[selected_provider]
         else:
             provider = selected_provider.capitalize()
-        header = f"EC Service Bot from AI-venturers"
-        powered_by = f"powered by Amazon Kendra and {provider}!"
-        st.write(f"<h3 class='main-header'>{header}</h3><br>{powered_by}", unsafe_allow_html=True)
+        header = f"EI Service Chatbot"
+        powered_by = f"Powered by Amazon Kendra and {provider} !"
+        st.title(header)
+        st.caption(powered_by)
     with col3:
         clear = st.button("Clear Chat")
     return clear
@@ -140,6 +130,7 @@ if clear:
     st.session_state.input = ""
     st.session_state["chat_history"] = []
 
+    
 def handle_input():
     input = st.session_state.input
     question_with_id = {
@@ -147,7 +138,8 @@ def handle_input():
         'id': len(st.session_state.questions)
     }
     st.session_state.questions.append(question_with_id)
-
+    
+    # Managing Chat History
     chat_history = st.session_state["chat_history"]
     if len(chat_history) == MAX_HISTORY_LENGTH:
         chat_history = chat_history[:-1]
@@ -170,6 +162,7 @@ def handle_input():
         'id': len(st.session_state.questions)
     })
     st.session_state.input = ""
+    
 
 def write_user_message(md):
     col1, col2 = st.columns([1,12])
@@ -218,5 +211,9 @@ with st.container():
     write_user_message(q)
     write_chat_message(a, q)
 
-st.markdown('---')
-input = st.text_input("You are talking to an AI, ask any question.", key="input", on_change=handle_input)
+st.markdown("---")
+input = st.text_input("You are talking to EI Service AI. Input your question below...", key="input", on_change=handle_input)
+
+st.markdown("---")
+st.markdown("### Session State Check")
+st.write(st.session_state)
