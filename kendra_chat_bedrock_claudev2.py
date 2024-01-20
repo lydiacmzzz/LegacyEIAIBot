@@ -50,14 +50,20 @@ def build_chain():
   llm = Bedrock(
       client=boto3_bedrock,
       region_name = region,
-      model_kwargs={"max_tokens_to_sample":300,"temperature":1,"top_k":250,"top_p":0.999,"anthropic_version":"bedrock-2023-05-31"},
+      model_kwargs={
+          "max_tokens_to_sample":300,
+          "temperature":1,
+          "top_k":250,"top_p":0.999,
+          "anthropic_version":"bedrock-2023-05-31"
+      },
       model_id="anthropic.claude-v2"
   )
       
   retriever = AmazonKendraRetriever(index_id=kendra_index_id,top_k=5,region_name=region)
 
 
-  prompt_template = """Human: This is a friendly conversation between a human and an AI. 
+  prompt_template = """
+  Human: This is a friendly conversation between a human and an AI. 
   The AI is talkative and provides specific details from its context but limits it to 240 tokens.
   If the AI does not know the answer to a question, it truthfully says it 
   does not know.
@@ -73,11 +79,12 @@ def build_chain():
 
   Assistant:
   """
-  PROMPT = PromptTemplate(
+  prompt = PromptTemplate(
       template=prompt_template, input_variables=["context", "question"]
   )
 
-  condense_qa_template = """{chat_history}
+  condense_qa_template = """
+  {chat_history}
   Human:
   Given the previous conversation and a follow up question below, rephrase the follow up question
   to be a standalone question.
@@ -86,6 +93,7 @@ def build_chain():
   Standalone Question:
 
   Assistant:"""
+    
   standalone_question_prompt = PromptTemplate.from_template(condense_qa_template)
 
 
@@ -95,10 +103,10 @@ def build_chain():
         retriever=retriever, 
         condense_question_prompt=standalone_question_prompt, 
         return_source_documents=True, 
-        combine_docs_chain_kwargs={"prompt":PROMPT},
+        combine_docs_chain_kwargs={"prompt":prompt},
         verbose=True)
 
-  # qa = ConversationalRetrievalChain.from_llm(llm=llm, retriever=retriever, qa_prompt=PROMPT, return_source_documents=True)
+  # qa = ConversationalRetrievalChain.from_llm(llm=llm, retriever=retriever, qa_prompt=prompt, return_source_documents=True)
   return qa
 
 

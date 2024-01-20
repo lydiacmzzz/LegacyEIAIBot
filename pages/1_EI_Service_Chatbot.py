@@ -205,13 +205,13 @@ def write_chat_message(md, q):
         render_answer(md['answer'])
         render_sources(md['sources'])
     
-        
+
 with st.container():
   for (q, a) in zip(st.session_state.questions, st.session_state.answers):
     write_user_message(q)
     write_chat_message(a, q)
 
-st.markdown("---")
+st.markdown("")
 input = st.text_input("You are talking to EI Service AI. Input your question below...", key="input", on_change=handle_input)
 
 st.markdown("---")
