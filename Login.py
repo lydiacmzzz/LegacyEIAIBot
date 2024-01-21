@@ -25,10 +25,10 @@ def display_main_content():
     
     col1, col2, col3 = st.columns([3, 6, 5])
     with col2:
-        if st.button("Singpass", key="singpass"):
+        if st.button("Singpass"):
             switch_page("EI Service Chatbot")
     with col3:
-        if st.button("Corppass", key="corppass"):
+        if st.button("Corppass"):
             switch_page("EI Service Chatbot")
 
             
