@@ -8,6 +8,7 @@ from datetime import datetime
 # Set Streamlit page configuration
 st.set_page_config(page_title="EI Service Repository")
 
+
 # S3 Bucket name
 BUCKET_NAME = "zg-aiventurerbucket-202401201915"
 
@@ -121,6 +122,10 @@ def main():
     # Page and sidebar headers
     st.markdown("# EI Service Repository")
     st.sidebar.header("EI Service Repository")
+    
+    ECDA_Contact_Us_Page = "https://www.ecda.gov.sg/contact-us"
+    with st.sidebar:
+        st.link_button("Contact Us", ECDA_Contact_Us_Page)
 
     # Display uploaded files in S3
     st.subheader("Uploaded Files in S3:")

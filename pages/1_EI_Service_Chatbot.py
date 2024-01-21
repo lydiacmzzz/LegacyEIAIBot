@@ -16,6 +16,17 @@ PROVIDER_MAP = {
     'falcon40b': 'Falcon 40B'
 }
 
+st.set_page_config(
+    page_title = "EI Service Chatbot",
+    page_icon = "💻"
+)
+st.sidebar.header("EI Service Chatbot")
+
+ECDA_Contact_Us_Page = "https://www.ecda.gov.sg/contact-us"
+with st.sidebar:
+     st.link_button("Contact Us", ECDA_Contact_Us_Page)
+
+
 #function to read a properties file and create environment variables
 def read_properties_file(filename):
     import os
@@ -74,11 +85,7 @@ if "answers" not in st.session_state:
 if "input" not in st.session_state:
     st.session_state.input = ""
 
-st.set_page_config(
-    page_title = "EI Service Chatbot v1",
-    page_icon = "💻"
-)
-st.sidebar.header("EI Service Chatbot")
+
 
 st.markdown("""
         <style>
@@ -207,9 +214,9 @@ def write_chat_message(md, q):
     
 
 with st.container():
-  for (q, a) in zip(st.session_state.questions, st.session_state.answers):
-    write_user_message(q)
-    write_chat_message(a, q)
+    for (q, a) in zip(st.session_state.questions, st.session_state.answers):
+        write_user_message(q)
+        write_chat_message(a, q)
 
 st.markdown("")
 input = st.text_input("You are talking to EI Service AI. Input your question below...", key="input", on_change=handle_input)

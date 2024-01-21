@@ -1,47 +1,42 @@
 import streamlit as st
+from streamlit_extras.switch_page_button import switch_page
 
-st.write("Login Page")
+# Constants
+ECDA_ICON = "images/ECDA_Logo.png"
+ECDA_CONTACT_US_PAGE = "https://www.ecda.gov.sg/contact-us"
 
-import streamlit as st
-import boto3
-from botocore.exceptions import NoCredentialsError
+def setup_sidebar():
+    """Sets up the sidebar content."""
+    st.sidebar.info("Select a function above.")
+    st.sidebar.link_button("Contact Us", ECDA_CONTACT_US_PAGE)
 
-# Initialize the Kendra client
-def init_kendra_client():
-    try:
-        return boto3.client('kendra')
-    except NoCredentialsError:
-        st.error("AWS credentials not found. Please configure your credentials.")
-        return None
+def display_header():
+    """Displays the header with logo and welcome message."""
+    col1, col2, col3 = st.columns([3, 4, 1])
+    with col2:
+        st.image(ECDA_ICON, use_column_width='auto')
+        st.markdown("# Welcome!")
 
-# Function to start the data source sync job
-def start_sync(kendra_client, data_source_id, index_id):
-    try:
-        response = kendra_client.start_data_source_sync_job(
-            Id=data_source_id,
-            IndexId=index_id
-        )
-        return response
-    except Exception as e:
-        st.error(f"Error starting sync job: {e}")
-        return None
+def display_main_content():
+    """Displays the main content and interactive buttons."""
+    col1, col2, col3 = st.columns([2, 8, 1])
+    with col2:
+        st.write("Welcome to the EI Service Portal! Ask anything about EIC Programmes")
+    
+    col1, col2, col3 = st.columns([3, 6, 5])
+    with col2:
+        if st.button("Singpass", key="singpass"):
+            switch_page("EI Service Chatbot")
+    with col3:
+        if st.button("Corppass", key="corppass"):
+            switch_page("EI Service Chatbot")
 
-# Streamlit app
+            
 def main():
-    st.title("AWS Kendra Data Source Sync")
-
-    kendra_client = init_kendra_client()
-    if kendra_client:
-        st.success("Connected to AWS Kendra service")
-
-        data_source_id = st.text_input("Enter Data Source ID:")
-        index_id = st.text_input("Enter Index ID:")
-
-        if st.button("Start Sync"):
-            response = start_sync(kendra_client, data_source_id, index_id)
-            if response:
-                st.success("Sync job started successfully!")
-                st.json(response)
+    st.set_page_config(page_title="Welcome to EI Service Portal")
+    setup_sidebar()
+    display_header()
+    display_main_content()
 
 if __name__ == "__main__":
     main()
