@@ -7,7 +7,6 @@ ECDA_CONTACT_US_PAGE = "https://www.ecda.gov.sg/contact-us"
 
 def setup_sidebar():
     """Sets up the sidebar content."""
-    st.sidebar.info("Select a function above.")
     st.sidebar.link_button("Contact Us", ECDA_CONTACT_US_PAGE)
 
 def display_header():

@@ -159,7 +159,7 @@ def start_sync(kendra_client):
 # Function to check status of the data source sync job   
 def check_sync(kendra_client):
     try:
-        response = kendra_client.describe_data_source(
+        response = kendra_client.list_data_source_sync_jobs(
             Id=s3_data_source_id,
             IndexId=kendra_index_id
         )
@@ -168,11 +168,31 @@ def check_sync(kendra_client):
         st.error(f"Error checking sync job: {e}")
         return None
 
+def display_dict_as_table(data_dict):
+    # Flatten the nested dictionary
+    flat_dict = {}
+    for key, value in data_dict.items():
+        if isinstance(value, dict):
+            for sub_key, sub_value in value.items():
+                flat_dict[f"{key}_{sub_key}"] = sub_value
+        else:
+            flat_dict[key] = value
+    
+    # Convert to DataFrame
+    df = pd.DataFrame([flat_dict])
+
+    # Convert string representations of datetime to actual datetime objects
+    for col in df.columns:
+        if 'Time' in col:
+            df[col] = df[col].apply(lambda x: eval(x) if isinstance(x, str) else x)
+
+    # Display the DataFrame in Streamlit
+    st.table(df)
+
 # Main function for Streamlit app
 def main():
     # Page and sidebar headers
     st.markdown("# EI Service Repository")
-    st.sidebar.header("EI Service Repository")
     
     ECDA_Contact_Us_Page = "https://www.ecda.gov.sg/contact-us"
     with st.sidebar:
@@ -200,19 +220,24 @@ def main():
     st.markdown("---")
     kendra_client = init_kendra_client()
     if kendra_client:
-        st.success("Connected to AWS Kendra service")
+        st.info("Connected to AWS Kendra service")
+    
+    col1, col2 = st.columns([3,3])
+    sync_start_response = {}
+    sync_status_response = {}
+    with col1:
+        if st.button("Start Sync"):
+            sync_start_response = start_sync(kendra_client)
+    if sync_start_response:
+        st.success("Sync job started successfully!")
+        #st.json(sync_start_response)
         
-    if st.button("Start Sync"):
-        response = start_sync(kendra_client)
-        if response:
-            st.success("Sync job started successfully!")
-            st.json(response)
-                
-    if st.button("Check Sync"):
-        sync_status_response = check_sync(kendra_client)
-        if sync_status_response:
-            st.success("Sync job status retrieved successfully!")
-            st.json(sync_status_response)
+    with col2:  
+        if st.button("Check Sync"):
+            sync_status_response = check_sync(kendra_client)["History"][0]
+    if sync_status_response:
+        st.success("Sync job status retrieved successfully!")
+        display_dict_as_table(sync_status_response)
 
             
 if __name__ == "__main__":

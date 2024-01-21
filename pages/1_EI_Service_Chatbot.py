@@ -20,7 +20,6 @@ st.set_page_config(
     page_title = "EI Service Chatbot",
     page_icon = "💻"
 )
-st.sidebar.header("EI Service Chatbot")
 
 ECDA_Contact_Us_Page = "https://www.ecda.gov.sg/contact-us"
 with st.sidebar:
