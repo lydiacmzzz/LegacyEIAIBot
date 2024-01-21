@@ -121,7 +121,7 @@ def write_top_bar():
         else:
             provider = selected_provider.capitalize()
         header = f"EI Service Chatbot"
-        powered_by = f"Powered by Amazon Kendra and {provider} !"
+        powered_by = f"Powered by Amazon Kendra and {provider}"
         st.title(header)
         st.caption(powered_by)
     with col3:

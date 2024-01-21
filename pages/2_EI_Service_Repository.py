@@ -38,6 +38,17 @@ st.markdown(css, unsafe_allow_html=True)
 # Get Singapore timezone
 sgt_zone = pytz.timezone('Asia/Singapore')
 
+ECDA_ICON = "images/ECDA_Logo.png"
+def write_top_bar():
+    col1, col2, col3 = st.columns([3,8,2])
+    with col1:
+        st.image(ECDA_ICON, use_column_width='never')
+    with col2:
+        header = f"EI Service Repository"
+        powered_by = f"Powered by Amazon Kendra and S3"
+        st.title(header)
+        st.caption(powered_by)
+
 # Function to upload files to S3
 def upload_to_s3(local_file_path, s3_file_path):
     s3 = boto3.client('s3')
@@ -223,14 +234,13 @@ def get_file_from_s3(s3_file_path):
 # Main function for Streamlit app
 def main():
     # Page and sidebar headers
-    st.markdown("# EI Service Repository")
-    
+    write_top_bar()
     ECDA_Contact_Us_Page = "https://www.ecda.gov.sg/contact-us"
     with st.sidebar:
         st.link_button("Contact Us", ECDA_Contact_Us_Page)
 
     # Display uploaded files in S3
-    st.subheader("Uploaded Files in S3:")
+    st.markdown("### Uploaded Files in S3:")
     files_info = list_s3_files()
     
     if files_info:
@@ -260,7 +270,7 @@ def main():
         # Use Streamlit's built-in functionality to display the DataFrame
         st.write(df.to_html(escape=False), unsafe_allow_html=True)
 
-                    
+    st.markdown("")              
     # File uploader
     uploaded_file = st.file_uploader("Choose a file", type=["csv","xlsx","txt","pdf","docx"])
     if uploaded_file:
@@ -272,11 +282,12 @@ def main():
             process_and_upload(uploaded_file)
     
     st.markdown("---")
+    st.markdown("### Amazon Kendra")
     kendra_client = init_kendra_client()
     if kendra_client:
-        st.success("Connected to AWS Kendra service")
+        st.success("Connected to Amazon Kendra service")
     else:
-        st.error("Failed connection to AWS Kendra service")
+        st.error("Failed connection to Amazon Kendra service")
     
     col1, col2 = st.columns([3,3])
     sync_start_response = {}
