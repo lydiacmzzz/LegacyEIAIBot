@@ -47,30 +47,27 @@ else:
     st.session_state['user_id'] = user_id
 
 
-if 'llm_chain1' not in st.session_state:
+if 'llm_chain' not in st.session_state:
     if (len(sys.argv) > 1):
         if (sys.argv[1] == 'bedrock_claudev2'):
-            st.session_state['llm_app1'] = bedrock_claudev2
-            st.session_state['llm_chain1'] = bedrock_claudev2.build_chain()
+            st.session_state['llm_app'] = bedrock_claudev2
+            st.session_state['llm_chain'] = bedrock_claudev2.build_chain()
         elif (sys.argv[1] == 'llama2'):
-            st.session_state['llm_app1'] = llama2
-            st.session_state['llm_chain1'] = llama2.build_chain()
+            st.session_state['llm_app'] = llama2
+            st.session_state['llm_chain'] = llama2.build_chain()
         elif (sys.argv[1] == 'falcon'):
-            st.session_state['llm_app1'] = falcon40b
-            st.session_state['llm_chain1'] = falcon40b.build_chain()
+            st.session_state['llm_app'] = falcon40b
+            st.session_state['llm_chain'] = falcon40b.build_chain()
         else:
             raise Exception("Unsupported LLM: ", sys.argv[1])
     else:
         raise Exception("Usage: streamlit run app.py <bedrock_claude|bedrock_claudev2|llama2|falcon40b>")
 
-if 'chat_history1' not in st.session_state:
-    st.session_state['chat_history1'] = []
-    
 if 'chat_history' not in st.session_state:
     st.session_state['chat_history'] = []
-
-if "chats1" not in st.session_state:
-    st.session_state.chats1 = [
+    
+if "chats" not in st.session_state:
+    st.session_state.chats = [
         {
             'id': 0,
             'question': '',
@@ -78,26 +75,16 @@ if "chats1" not in st.session_state:
         }
     ]
 
-if "questions1" not in st.session_state:
-    st.session_state.questions1 = []
+if "questions" not in st.session_state:
+    st.session_state.questions = []
 
-if "answers1" not in st.session_state:
-    st.session_state.answers1 = []
+if "answers" not in st.session_state:
+    st.session_state.answers = []
 
-if "input1" not in st.session_state:
-    st.session_state.input1 = ""
+if "input" not in st.session_state:
+    st.session_state.input = ""
 
-# CN - 21 Jan 2024
-st.session_state['llm_app'] = st.session_state['llm_app1']
-st.session_state['llm_chain'] = st.session_state['llm_chain1']
-st.session_state['chat_history'] = st.session_state['chat_history1']
-st.session_state.chats = st.session_state.chats1        
-st.session_state.questions = st.session_state.questions1
-st.session_state.answers = st.session_state.answers1
-st.session_state.input = st.session_state.input1
 
-chat_provider = sys.argv[1]
-st.sidebar.header(f"EI Service Chatbot ({chat_provider})")
 
 st.markdown("""
         <style>
@@ -134,7 +121,7 @@ def write_top_bar():
         else:
             provider = selected_provider.capitalize()
         header = f"EI Service Chatbot"
-        powered_by = f"Powered by Amazon Kendra and {provider} !"
+        powered_by = f"Powered by Amazon Kendra and {provider}"
         st.title(header)
         st.caption(powered_by)
     with col3:
@@ -148,10 +135,6 @@ if clear:
     st.session_state.answers = []
     st.session_state.input = ""
     st.session_state["chat_history"] = []
-    st.session_state.questions1 = []
-    st.session_state.answers1 = []
-    st.session_state.input1 = ""
-    st.session_state["chat_history1"] = []
 
     
 def handle_input():
@@ -185,14 +168,6 @@ def handle_input():
         'id': len(st.session_state.questions)
     })
     st.session_state.input = ""
-    # CN - Added 21 Jan 2024
-    st.session_state['llm_app1'] = st.session_state['llm_app']
-    st.session_state['llm_chain1'] = st.session_state['llm_chain']
-    st.session_state['chat_history1'] = st.session_state['chat_history']
-    st.session_state.chats1 = st.session_state.chats        
-    st.session_state.questions1 = st.session_state.questions
-    st.session_state.answers1 = st.session_state.answers
-    st.session_state.input1 = st.session_state.input    
     
 
 def write_user_message(md):

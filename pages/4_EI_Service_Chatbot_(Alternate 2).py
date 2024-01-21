@@ -47,30 +47,30 @@ else:
     st.session_state['user_id'] = user_id
 
 
-if 'llm_chain1' not in st.session_state:
+if 'llm_chain3' not in st.session_state:
     if (len(sys.argv) > 1):
-        if (sys.argv[1] == 'bedrock_claudev2'):
-            st.session_state['llm_app1'] = bedrock_claudev2
-            st.session_state['llm_chain1'] = bedrock_claudev2.build_chain()
-        elif (sys.argv[1] == 'llama2'):
-            st.session_state['llm_app1'] = llama2
-            st.session_state['llm_chain1'] = llama2.build_chain()
-        elif (sys.argv[1] == 'falcon'):
-            st.session_state['llm_app1'] = falcon40b
-            st.session_state['llm_chain1'] = falcon40b.build_chain()
+        if (sys.argv[3] == 'bedrock_claudev2'):
+            st.session_state['llm_app3'] = bedrock_claudev2
+            st.session_state['llm_chain3'] = bedrock_claudev2.build_chain()
+        elif (sys.argv[3] == 'llama2'):
+            st.session_state['llm_app3'] = llama2
+            st.session_state['llm_chain3'] = llama2.build_chain()
+        elif (sys.argv[3] == 'falcon'):
+            st.session_state['llm_app3'] = falcon40b
+            st.session_state['llm_chain3'] = falcon40b.build_chain()
         else:
             raise Exception("Unsupported LLM: ", sys.argv[1])
     else:
         raise Exception("Usage: streamlit run app.py <bedrock_claude|bedrock_claudev2|llama2|falcon40b>")
 
-if 'chat_history1' not in st.session_state:
-    st.session_state['chat_history1'] = []
+if 'chat_history3' not in st.session_state:
+    st.session_state['chat_history3'] = []
     
 if 'chat_history' not in st.session_state:
     st.session_state['chat_history'] = []
 
-if "chats1" not in st.session_state:
-    st.session_state.chats1 = [
+if "chats3" not in st.session_state:
+    st.session_state.chats3 = [
         {
             'id': 0,
             'question': '',
@@ -78,25 +78,25 @@ if "chats1" not in st.session_state:
         }
     ]
 
-if "questions1" not in st.session_state:
-    st.session_state.questions1 = []
+if "questions3" not in st.session_state:
+    st.session_state.questions3 = []
 
-if "answers1" not in st.session_state:
-    st.session_state.answers1 = []
+if "answers3" not in st.session_state:
+    st.session_state.answers3 = []
 
-if "input1" not in st.session_state:
-    st.session_state.input1 = ""
+if "input3" not in st.session_state:
+    st.session_state.input3 = ""
 
 # CN - 21 Jan 2024
-st.session_state['llm_app'] = st.session_state['llm_app1']
-st.session_state['llm_chain'] = st.session_state['llm_chain1']
-st.session_state['chat_history'] = st.session_state['chat_history1']
-st.session_state.chats = st.session_state.chats1        
-st.session_state.questions = st.session_state.questions1
-st.session_state.answers = st.session_state.answers1
-st.session_state.input = st.session_state.input1
+st.session_state['llm_app'] = st.session_state['llm_app3']
+st.session_state['llm_chain'] = st.session_state['llm_chain3']
+st.session_state['chat_history'] = st.session_state['chat_history3']
+st.session_state.chats = st.session_state.chats3        
+st.session_state.questions = st.session_state.questions3
+st.session_state.answers = st.session_state.answers3
+st.session_state.input = st.session_state.input3
 
-chat_provider = sys.argv[1]
+chat_provider = sys.argv[3]
 st.sidebar.header(f"EI Service Chatbot ({chat_provider})")
 
 st.markdown("""
@@ -128,7 +128,7 @@ def write_top_bar():
     with col1:
         st.image(AI_ICON, use_column_width='never')
     with col2:
-        selected_provider = sys.argv[1]
+        selected_provider = sys.argv[3]
         if selected_provider in PROVIDER_MAP:
             provider = PROVIDER_MAP[selected_provider]
         else:
@@ -148,10 +148,10 @@ if clear:
     st.session_state.answers = []
     st.session_state.input = ""
     st.session_state["chat_history"] = []
-    st.session_state.questions1 = []
-    st.session_state.answers1 = []
-    st.session_state.input1 = ""
-    st.session_state["chat_history1"] = []
+    st.session_state.questions3 = []
+    st.session_state.answers3 = []
+    st.session_state.input3 = ""
+    st.session_state["chat_history3"] = []
 
     
 def handle_input():
@@ -186,13 +186,13 @@ def handle_input():
     })
     st.session_state.input = ""
     # CN - Added 21 Jan 2024
-    st.session_state['llm_app1'] = st.session_state['llm_app']
-    st.session_state['llm_chain1'] = st.session_state['llm_chain']
-    st.session_state['chat_history1'] = st.session_state['chat_history']
-    st.session_state.chats1 = st.session_state.chats        
-    st.session_state.questions1 = st.session_state.questions
-    st.session_state.answers1 = st.session_state.answers
-    st.session_state.input1 = st.session_state.input    
+    st.session_state['llm_app3'] = st.session_state['llm_app']
+    st.session_state['llm_chain3'] = st.session_state['llm_chain']
+    st.session_state['chat_history3'] = st.session_state['chat_history']
+    st.session_state.chats3 = st.session_state.chats        
+    st.session_state.questions3 = st.session_state.questions
+    st.session_state.answers3 = st.session_state.answers
+    st.session_state.input3 = st.session_state.input    
     
 
 def write_user_message(md):
