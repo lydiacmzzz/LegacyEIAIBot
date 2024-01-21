@@ -1,8 +1,10 @@
 import streamlit as st
 import os
+import io
 import pandas as pd
 import boto3
 import pytz
+import base64
 from datetime import datetime
 from PyPDF2 import PdfReader
 from docx import Document
@@ -13,12 +15,28 @@ from botocore.exceptions import NoCredentialsError, ClientError
 st.set_page_config(page_title="EI Service Repository")
 
 # S3 Bucket name
-BUCKET_NAME = "zg-aiventurerbucket-202401201915"
+BUCKET_NAME = os.environ["S3_BUCKET_NAME"]
 
 # Kendra & S3 Config
-s3_data_source_id="b9bd17cc-20c3-4fa1-a7ba-b279c4ff7cf7"
-kendra_index_id="8681a6fb-a746-468e-940f-00a7b099ebbc"
+s3_data_source_id=os.environ["S3_DATA_SOURCE_ID"]
+kendra_index_id=os.environ["KENDRA_INDEX_ID"]
 
+# Custom CSS to inject into the Streamlit app
+css = """
+<style>
+table {
+    text-align: left;
+}
+thead th {
+    text-align: left;
+}
+</style>
+"""
+
+st.markdown(css, unsafe_allow_html=True)
+
+# Get Singapore timezone
+sgt_zone = pytz.timezone('Asia/Singapore')
 
 # Function to upload files to S3
 def upload_to_s3(local_file_path, s3_file_path):
@@ -39,9 +57,6 @@ def upload_to_s3(local_file_path, s3_file_path):
 # Function to list files in S3 bucket
 def list_s3_files():
     s3 = boto3.client('s3')
-    
-    # Get Singapore timezone
-    sgt_zone = pytz.timezone('Asia/Singapore')
 
     try:
         response = s3.list_objects(Bucket=BUCKET_NAME)
@@ -185,9 +200,25 @@ def display_dict_as_table(data_dict):
     for col in df.columns:
         if 'Time' in col:
             df[col] = df[col].apply(lambda x: eval(x) if isinstance(x, str) else x)
-
+            df[col] = df[col].apply(lambda x: x.astimezone(sgt_zone) if isinstance(x, datetime) else x)
     # Display the DataFrame in Streamlit
     st.table(df)
+
+    
+def get_file_from_s3(s3_file_path):
+    s3 = boto3.client('s3')
+    try:
+        file_obj = io.BytesIO()
+        s3.download_fileobj(BUCKET_NAME, s3_file_path, file_obj)
+        file_obj.seek(0)  # Go to the start of the file
+        return file_obj
+    except NoCredentialsError:
+        st.error("AWS credentials not available.")
+        return None
+    except ClientError as e:
+        st.error(f"Error downloading file: {e}")
+        return None
+            
 
 # Main function for Streamlit app
 def main():
@@ -201,14 +232,37 @@ def main():
     # Display uploaded files in S3
     st.subheader("Uploaded Files in S3:")
     files_info = list_s3_files()
-     
+    
     if files_info:
-        st.table(pd.DataFrame(files_info))
-    else:  
-        st.info("No files in the S3 bucket.")
+        # Convert the list of dictionaries to a DataFrame for easier manipulation
+        df = pd.DataFrame(files_info)
 
+        # Format the 'Modified Date' and 'File Size (KB)'
+        df['Modified Date'] = pd.to_datetime(df['Modified Date']).dt.strftime("%Y-%m-%d %H:%M:%S")
+        df['File Size (KB)'] = df['File Size (KB)'].map(lambda x: f"{x:.2f} KB")
+
+        # Initialize a column for the download buttons
+        df['Download'] = ""
+
+        for index, file_info in df.iterrows():
+            s3_file_path = file_info['Document Name']
+
+            # Get the file object from S3
+            file_obj = get_file_from_s3(s3_file_path)
+            if file_obj:
+                # Convert file object to a download-able format
+                b64 = base64.b64encode(file_obj.read()).decode()
+                href = f'<a href="data:file/octet-stream;base64,{b64}" download="{s3_file_path}">Download</a>'
+                df.at[index, 'Download'] = href
+            else:
+                df.at[index, 'Download'] = "Unavailable"
+
+        # Use Streamlit's built-in functionality to display the DataFrame
+        st.write(df.to_html(escape=False), unsafe_allow_html=True)
+
+                    
     # File uploader
-    uploaded_file = st.file_uploader("Choose a file", type=["csv", "xlsx","txt","pdf","docx"])
+    uploaded_file = st.file_uploader("Choose a file", type=["csv","xlsx","txt","pdf","docx"])
     if uploaded_file:
         st.success("File successfully uploaded.")
         file_preview(uploaded_file)
@@ -220,7 +274,9 @@ def main():
     st.markdown("---")
     kendra_client = init_kendra_client()
     if kendra_client:
-        st.info("Connected to AWS Kendra service")
+        st.success("Connected to AWS Kendra service")
+    else:
+        st.error("Failed connection to AWS Kendra service")
     
     col1, col2 = st.columns([3,3])
     sync_start_response = {}
