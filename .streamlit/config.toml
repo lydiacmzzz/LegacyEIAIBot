@@ -3,6 +3,7 @@ port = 8501
 runOnSave = true
 enableXsrfProtection = false
 enableCORS = false
+maxUploadSize = 50
 
 [browser]
 gatherUsageStats = false
