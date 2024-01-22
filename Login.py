@@ -5,6 +5,9 @@ from streamlit_extras.switch_page_button import switch_page
 EISER_ICON = "images/EI-SER-Logo.png"
 ECDA_CONTACT_US_PAGE = "https://www.ecda.gov.sg/contact-us"
 
+if 'user_type' not in st.session_state:
+    st.session_state['user_type'] = ""
+    
 def setup_sidebar():
     """Sets up the sidebar content."""
     st.sidebar.link_button("Contact Us", ECDA_CONTACT_US_PAGE)

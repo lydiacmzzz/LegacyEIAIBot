@@ -39,6 +39,10 @@ st.markdown(css, unsafe_allow_html=True)
 # Get Singapore timezone
 sgt_zone = pytz.timezone('Asia/Singapore')
 
+# Check user type
+if 'user_type' not in st.session_state:
+    st.session_state['user_type'] = ""
+
 EISER_ICON = "images/EI-SER-Logo.png"
 def write_top_bar():
     col1, col2, col3 = st.columns([3,8,2])
@@ -323,4 +327,7 @@ def main():
 
             
 if __name__ == "__main__":
-    main()
+    if st.session_state.user_type == "":
+        st.error("Please proceed to login...")
+    else:
+        main()
