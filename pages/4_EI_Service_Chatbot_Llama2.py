@@ -23,8 +23,10 @@ st.set_page_config(
 )
 
 ECDA_Contact_Us_Page = "https://www.ecda.gov.sg/contact-us"
-with st.sidebar:
-     st.link_button("Contact Us", ECDA_Contact_Us_Page)
+
+# Check user type
+if 'user_type' not in st.session_state:
+    st.session_state['user_type'] = ""
 
 
 #function to read a properties file and create environment variables
@@ -141,17 +143,20 @@ def write_top_bar():
         clear = st.button("Clear Chat")
     return clear
 
-clear = write_top_bar()
+if st.session_state.user_type == "":
+    st.write("")
+else:
+    clear = write_top_bar()
 
-if clear:
-    st.session_state.questions = []
-    st.session_state.answers = []
-    st.session_state.input = ""
-    st.session_state["chat_history"] = []
-    st.session_state.questions3 = []
-    st.session_state.answers3 = []
-    st.session_state.input3 = ""
-    st.session_state["chat_history3"] = []
+    if clear:
+        st.session_state.questions = []
+        st.session_state.answers = []
+        st.session_state.input = ""
+        st.session_state["chat_history"] = []
+        st.session_state.questions3 = []
+        st.session_state.answers3 = []
+        st.session_state.input3 = ""
+        st.session_state["chat_history3"] = []
 
     
 def handle_input():
@@ -243,9 +248,13 @@ with st.container():
         write_chat_message(a, q)
 
 st.markdown("")
-input = st.text_input("You are talking to EI Service AI. Input your question below...", key="input", on_change=handle_input)
-
-st.markdown("---")
-with st.expander("Session State"):
-    st.write(st.session_state)
+if st.session_state.user_type == "":
+    st.error("Please proceed to login...")
+else:
+    with st.sidebar:
+         st.link_button("Contact Us", ECDA_Contact_Us_Page)
+    input = st.text_input("You are talking to EI Service AI. Input your question below...", key="input", on_change=handle_input)
+    st.markdown("---")
+    with st.expander("Session State"):
+        st.write(st.session_state)
 

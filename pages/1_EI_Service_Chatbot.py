@@ -141,6 +141,7 @@ def write_top_bar():
     with col3:
         clear = st.button("Clear Chat")
     return clear
+
 if st.session_state.user_type == "":
     st.write("")
 else:
@@ -246,10 +247,7 @@ with st.container():
         write_chat_message(a, q)
 
 
-        
 st.markdown("")
-
-
 if st.session_state.user_type == "":
     st.error("Please proceed to login...")
 else:
