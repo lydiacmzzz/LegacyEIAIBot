@@ -7,7 +7,8 @@ import kendra_chat_falcon_40b as falcon40b
 import kendra_chat_llama_2 as llama2
 
 USER_ICON = "images/user-icon.png"
-AI_ICON = "images/ECDA_Logo.png"
+ECDA_ICON = "images/ECDA_Logo.png"
+AI_ICON = "images/EI-SER-Logo.png"
 MAX_HISTORY_LENGTH = 5
 PROVIDER_MAP = {
     "bedrock_claude": "Bedrock Claude",
@@ -126,7 +127,7 @@ st.markdown("""
 def write_top_bar():
     col1, col2, col3 = st.columns([3,8,2])
     with col1:
-        st.image(AI_ICON, use_column_width='never')
+        st.image(ECDA_ICON, use_column_width='never')
     with col2:
         selected_provider = sys.argv[1]
         if selected_provider in PROVIDER_MAP:
