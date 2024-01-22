@@ -39,11 +39,11 @@ st.markdown(css, unsafe_allow_html=True)
 # Get Singapore timezone
 sgt_zone = pytz.timezone('Asia/Singapore')
 
-ECDA_ICON = "images/ECDA_Logo.png"
+EISER_ICON = "images/EI-SER-Logo.png"
 def write_top_bar():
     col1, col2, col3 = st.columns([3,8,2])
     with col1:
-        st.image(ECDA_ICON, use_column_width='never')
+        st.image(EISER_ICON, use_column_width=False,width=150)
     with col2:
         header = f"EI Service Repository"
         powered_by = f"Powered by Amazon Kendra and S3"
