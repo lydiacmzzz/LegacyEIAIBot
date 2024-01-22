@@ -5,6 +5,7 @@ import pandas as pd
 import boto3
 import pytz
 import base64
+import fitz
 from datetime import datetime
 from PyPDF2 import PdfReader
 from docx import Document
@@ -100,6 +101,9 @@ def file_preview(uploaded_file):
             pdf_text = get_text_from_pdf(pdf_file_path)
             df = pd.DataFrame({'Content': [pdf_text]})
             
+            # Preview the first page of the PDF
+            preview_pdf(pdf_file_path)
+            
             #Remove the PDF file
             os.remove(pdf_file_path)
             
@@ -150,6 +154,16 @@ def get_text_from_pdf(pdf_file):
         for page_num in range(min(3, len(pdf_reader.pages))):
             text += pdf_reader.pages[page_num].extract_text()
     return text
+
+# Function to Preview PDF      
+def preview_pdf(pdf_file_path):
+    doc = fitz.open(pdf_file_path)
+    page = doc[0]
+    pix = page.get_pixmap()
+    pix1 = fitz.Pixmap(pix,0) if pix.alpha else pix
+    img = pix1.tobytes("ppm")
+           
+    st.image(img,use_column_width=False,width=400)
 
 # Function to get text from Docx
 def get_text_from_docx(docx_file):

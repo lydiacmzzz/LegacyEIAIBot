@@ -7,3 +7,4 @@ pypdf2
 openpyxl
 python-docx
 streamlit_extras
+pymupdf
