@@ -98,7 +98,6 @@ st.session_state.answers = st.session_state.answers1
 st.session_state.input = st.session_state.input1
 
 chat_provider = sys.argv[1]
-st.sidebar.header(f"EI Service Chatbot ({chat_provider})")
 
 st.markdown("""
         <style>
@@ -247,5 +246,5 @@ st.markdown("")
 input = st.text_input("You are talking to EI Service AI. Input your question below...", key="input", on_change=handle_input)
 
 st.markdown("---")
-st.markdown("### Session State Check")
-st.write(st.session_state)
+with st.expander("Session State"):
+    st.write(st.session_state)
