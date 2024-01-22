@@ -27,11 +27,13 @@ def display_main_content():
     
     col1, col2, col3 = st.columns([2, 6, 5])
     with col2:
-        if st.button("Singpass"):
+        if st.button("EI Operator"):
+            st.session_state["user_type"]="EIOPS"
             switch_page("EI Service Chatbot")
     with col3:
-        if st.button("Corppass"):
-            switch_page("EI Service Chatbot")
+        if st.button("ECDA Officer"):
+            st.session_state["user_type"]="ECDA"
+            switch_page("EI Service Repository")
 
             
 def main():

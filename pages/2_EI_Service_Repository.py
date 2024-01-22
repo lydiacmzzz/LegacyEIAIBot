@@ -283,42 +283,43 @@ def main():
 
         # Use Streamlit's built-in functionality to display the DataFrame
         st.write(df.to_html(escape=False), unsafe_allow_html=True)
-
-    st.markdown("")              
-    # File uploader
-    uploaded_file = st.file_uploader("Choose a file", type=["csv","xlsx","txt","pdf","docx"])
-    if uploaded_file:
-        st.success("File successfully uploaded.")
-        file_preview(uploaded_file)
-
-        # Upload to S3 button
-        if st.button("Upload to S3"):
-            process_and_upload(uploaded_file)
-    
-    st.markdown("---")
-    st.markdown("### Amazon Kendra")
-    kendra_client = init_kendra_client()
-    if kendra_client:
-        st.success("Connected to Amazon Kendra service")
-    else:
-        st.error("Failed connection to Amazon Kendra service")
-    
-    col1, col2 = st.columns([3,3])
-    sync_start_response = {}
-    sync_status_response = {}
-    with col1:
-        if st.button("Start Sync"):
-            sync_start_response = start_sync(kendra_client)
-    if sync_start_response:
-        st.success("Sync job started successfully!")
-        #st.json(sync_start_response)
         
-    with col2:  
-        if st.button("Check Sync"):
-            sync_status_response = check_sync(kendra_client)["History"][0]
-    if sync_status_response:
-        st.success("Sync job status retrieved successfully!")
-        display_dict_as_table(sync_status_response)
+    if st.session_state["user_type"] == "ECDA":
+        st.markdown("")              
+        # File uploader
+        uploaded_file = st.file_uploader("Choose a file", type=["csv","xlsx","txt","pdf","docx"])
+        if uploaded_file:
+            st.success("File successfully uploaded.")
+            file_preview(uploaded_file)
+
+            # Upload to S3 button
+            if st.button("Upload to S3"):
+                process_and_upload(uploaded_file)
+
+        st.markdown("---")
+        st.markdown("### Amazon Kendra")
+        kendra_client = init_kendra_client()
+        if kendra_client:
+            st.success("Connected to Amazon Kendra service")
+        else:
+            st.error("Failed connection to Amazon Kendra service")
+
+        col1, col2 = st.columns([3,3])
+        sync_start_response = {}
+        sync_status_response = {}
+        with col1:
+            if st.button("Start Sync"):
+                sync_start_response = start_sync(kendra_client)
+        if sync_start_response:
+            st.success("Sync job started successfully!")
+            #st.json(sync_start_response)
+
+        with col2:  
+            if st.button("Check Sync"):
+                sync_status_response = check_sync(kendra_client)["History"][0]
+        if sync_status_response:
+            st.success("Sync job status retrieved successfully!")
+            display_dict_as_table(sync_status_response)
 
             
 if __name__ == "__main__":
