@@ -71,7 +71,7 @@ def upload_to_s3(local_file_path, s3_file_path):
         return False
 
 # Function to list files in S3 bucket
-@st.cache_data
+@st.cache_data(ttl=3600,show_spinner=True)
 def list_s3_files():
     s3 = boto3.client('s3')
 
@@ -234,7 +234,7 @@ def display_dict_as_table(data_dict):
     # Display the DataFrame in Streamlit
     st.table(df)
 
-@st.cache_data
+@st.cache_data(ttl=3600,show_spinner=True)
 def get_file_from_s3(s3_file_path):
     s3 = boto3.client('s3')
     try:
