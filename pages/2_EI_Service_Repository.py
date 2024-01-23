@@ -71,6 +71,7 @@ def upload_to_s3(local_file_path, s3_file_path):
         return False
 
 # Function to list files in S3 bucket
+@st.cache_data
 def list_s3_files():
     s3 = boto3.client('s3')
 
