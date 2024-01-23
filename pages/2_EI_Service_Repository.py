@@ -234,7 +234,7 @@ def display_dict_as_table(data_dict):
     # Display the DataFrame in Streamlit
     st.table(df)
 
-    
+@st.cache_data
 def get_file_from_s3(s3_file_path):
     s3 = boto3.client('s3')
     try:
