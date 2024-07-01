@@ -26,7 +26,7 @@ def display_main_content():
     """Displays the main content and interactive buttons."""
     col1, col2, col3 = st.columns([2, 4, 1])
     with col2:
-        st.caption("Ask anything about EIC Programmes!")
+        st.caption("Ask anything about EIC Lydia Programmes!")
     
     col1, col2, col3 = st.columns([2, 6, 5])
     with col2:
